@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
-  selector: 'app-root',
+  selector: 'cs-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'covid19-frontend';
+export class AppComponent{
+  pageTitle: string="Covid 19 stats"
 }
