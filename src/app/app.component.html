@@ -1,6 +1,12 @@
-<div>
-  <h1>
-    {{pageTitle}}
-  </h1>
-  <cs-city></cs-city>
+<nav class="navbar navbar-expand navbar-light bg-light">
+  <a class="navbar-brancd">{{ pageTitle }}</a>
+  <ul class="nav nav-pills">
+    <li><a class="nav-link">Home</a></li>
+    <li><a class="nav-link" [routerLink]="['/patients']">PatientList</a></li>
+    <li><a class="nav-link" [routerLink]="['/stats']">Statewise Stats</a></li>
+    <li></li>
+  </ul>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
 </div>

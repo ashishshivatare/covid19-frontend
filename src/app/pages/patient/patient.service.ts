@@ -11,7 +11,7 @@ import { tap, catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class PatientService {
-  private patientsUrl = 'https://api.covid19india.org/raw_data.json';
+  private patientsUrl = 'http://covid19-india.us-e2.cloudhub.io/all';
   constructor(private http: HttpClient) {}
   getPatients(): Observable<any> {
     return this.http.get(this.patientsUrl).pipe(
