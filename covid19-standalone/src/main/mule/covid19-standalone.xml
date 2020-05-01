@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ed760fd6-5a51-4e87-a4be-b7c5689ca9dd" >
+		<http:listener-connection host="0.0.0.0" port="${https.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="pkcs12" path="covid19-india.p12" alias="covid19-india" keyPassword="${keystore.password}" password="123456" />
+			</tls:context>
+		</http:listener-connection>
+		<http:listener-interceptors>
+   <http:cors-interceptor>
+       <http:origins>
+           <http:public-resource/>
+       </http:origins>
+   </http:cors-interceptor>
+</http:listener-interceptors>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="273acc1b-a1ed-4ea3-932c-3bb80835e333" >
+		<http:request-connection host="api.covid19india.org" protocol="HTTPS"/>
+	</http:request-config><flow name="covid19Flow"
+		doc:id="a70f563c-0244-495e-b283-b2821b3841ef">
+		<http:listener doc:name="Listener"
+			doc:id="f57bad69-2d52-4c3b-b6e3-cb4590bba0ff" path="/all"
+			config-ref="HTTP_Listener_config" />
+		<choice doc:name="Choice"
+			doc:id="406289dd-5f0e-4f18-a765-b90bd29f41a9">
+			<when expression="#[attributes.queryParams.city != null]">
+				<set-variable value="#[attributes.queryParams.city]"
+					doc:name="city_var" doc:id="2f0a5d62-56d5-4d28-8ef4-63d74eda03f8"
+					variableName="city_var" />
+				<flow-ref doc:name="city_request"
+					doc:id="d4716463-8683-4a3e-aa0c-3f4b412056eb" name="city_request" />
+			</when>
+			<when expression="#[attributes.queryParams.state != null]">
+				<set-variable value="#[attributes.queryParams.state]"
+					doc:name="state_var" doc:id="033b49c1-b0af-46d7-b670-4e5988e81c69"
+					variableName="state_var" />
+				<flow-ref doc:name="state_request"
+					doc:id="34f71622-7987-46ee-acff-7d35348fcc31" name="state_request" />
+			</when>
+			<otherwise>
+				<flow-ref doc:name="raw_data"
+					doc:id="bbcbb839-89e1-4475-bb9f-21e4e110c269" name="raw_data" />
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="city_request"
+		doc:id="4486837e-5e80-441f-872e-b5b4c8076951">
+		<http:request method="GET" doc:name="Request"
+			doc:id="8647c9c6-4657-4b03-8bc5-261473093c56"
+			config-ref="HTTP_Request_configuration"
+			path="/raw_data.json" />
+		<ee:transform doc:name="Transform Message" doc:id="61a5aa74-c28c-485c-b919-51449b35cea8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+	raw_data
+: payload.raw_data filter($.detectedcity == vars.city_var) map ( rawdatum  , indexOfRawdatum ) -> {
+	patientnumber: rawdatum.patientnumber,
+	agebracket: rawdatum.agebracket,
+	detectedcity: rawdatum.detectedcity,
+	detectedstate: rawdatum.detectedstate,
+	source1: rawdatum.source1,
+	typeoftransmission: rawdatum.typeoftransmission,
+	currentstatus: rawdatum.currentstatus
+} 
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	
+</flow>
+	<flow name="state_request"
+		doc:id="fbd79b71-ad15-45b1-9c57-1540bd12ac26">
+		<http:request method="GET" doc:name="Request"
+			doc:id="1ee986c6-b3f5-4a53-9341-afd33f6663df"
+			config-ref="HTTP_Request_configuration"
+			path="/raw_data.json" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="3ed68452-3cfe-4693-bdcd-77ec45982523">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+
+	raw_data
+: payload.raw_data filter($.detectedstate == vars.state_var) map ( rawdatum  , indexOfRawdatum ) -> {
+	patientnumber: rawdatum.patientnumber,
+	agebracket: rawdatum.agebracket,
+	detectedcity: rawdatum.detectedcity,
+	detectedstate: rawdatum.detectedstate,
+	source1: rawdatum.source1,
+	typeoftransmission: rawdatum.typeoftransmission,
+	currentstatus: rawdatum.currentstatus
+} 
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="raw_data"
+		doc:id="d6bc922a-f8fe-461e-9e95-6dc900b873ea">
+		<http:request method="GET" doc:name="Request"
+			doc:id="8ae768dd-a0e4-4801-8db1-9e1f248d73a4"
+			config-ref="HTTP_Request_configuration"
+			path="/raw_data.json" />
+	</flow>
+	
+
+</mule>
+

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="covid19-piechart" doc:id="f3ec7e77-b8a3-4be0-8022-636fc9fc912a" >
+		<http:listener doc:name="Listener" doc:id="df76eec2-118b-4fb2-8934-46740d3b4dbe" config-ref="HTTP_Listener_config" path="/piechart"/>
+		<http:request method="GET" doc:name="Request" doc:id="eda197c0-ea4b-4b44-9c9a-a25ee8010120" path="/states_daily.json" config-ref="HTTP_Request_configuration"/>
+		<ee:transform doc:name="Transform Message" doc:id="99bbc4be-f617-49f4-88f1-5cccc4332f59" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+ var confirmed = states_daily: payload.states_daily filter($.status == 'Confirmed') map ( statesdaily , indexOfStatesdaily ) -> {
+		an: statesdaily.an as Number ,
+		ap: statesdaily.ap as Number,
+		ar: statesdaily.ar as Number,
+		"as": statesdaily."as" as Number,
+		br: statesdaily.br as Number,
+		ch: statesdaily.ch as Number,
+		ct: statesdaily.ct as Number,
+		date: statesdaily.date,
+		dd: statesdaily.dd as Number,
+		dl: statesdaily.dl as Number,
+		dn: statesdaily.dn as Number,
+		ga: statesdaily.ga as Number,
+		gj: statesdaily.gj as Number,
+		hp: statesdaily.hp as Number,
+		hr: statesdaily.hr as Number,
+		jh: statesdaily.jh as Number,
+		jk: statesdaily.jk as Number,
+		ka: statesdaily.ka as Number,
+		kl: statesdaily.kl as Number,
+		la: statesdaily.la as Number,
+		ld: statesdaily.ld as Number,
+		mh: statesdaily.mh as Number,
+		ml: statesdaily.ml as Number,
+		mn: statesdaily.mn as Number,
+		mp: (if (isEmpty(statesdaily.mp)) ("0") else (statesdaily.mp)) as Number,
+		mz: statesdaily.mz as Number,
+		nl: statesdaily.nl as Number,
+		"or": statesdaily."or" as Number,
+		pb: statesdaily.pb as Number,
+		py: statesdaily.py as Number,
+		rj: statesdaily.rj as Number,
+		sk: statesdaily.sk as Number,
+		status: statesdaily.status,
+		tg: statesdaily.tg as Number,
+		tn: statesdaily.tn as Number,
+		tr: statesdaily.tr as Number,
+		tt: statesdaily.tt as Number,
+		up: statesdaily.up as Number,
+		ut: statesdaily.ut as Number,
+		wb: statesdaily.wb as Number
+	}
+	
+	
+ var deceased = states_daily: payload.states_daily filter($.status == 'Deceased') map ( statesdaily , indexOfStatesdaily ) -> {
+		an: statesdaily.an as Number ,
+		ap: statesdaily.ap as Number,
+		ar: statesdaily.ar as Number,
+		"as": statesdaily."as" as Number,
+		br: statesdaily.br as Number,
+		ch: statesdaily.ch as Number,
+		ct: statesdaily.ct as Number,
+		date: statesdaily.date,
+		dd: statesdaily.dd as Number,
+		dl: statesdaily.dl as Number,
+		dn: statesdaily.dn as Number,
+		ga: statesdaily.ga as Number,
+		gj: statesdaily.gj as Number,
+		hp: statesdaily.hp as Number,
+		hr: statesdaily.hr as Number,
+		jh: statesdaily.jh as Number,
+		jk: statesdaily.jk as Number,
+		ka: statesdaily.ka as Number,
+		kl: statesdaily.kl as Number,
+		la: statesdaily.la as Number,
+		ld: statesdaily.ld as Number,
+		mh: statesdaily.mh as Number,
+		ml: statesdaily.ml as Number,
+		mn: statesdaily.mn as Number,
+		mp: (if (isEmpty(statesdaily.mp)) ("0") else (statesdaily.mp)) as Number,
+		mz: statesdaily.mz as Number,
+		nl: statesdaily.nl as Number,
+		"or": statesdaily."or" as Number,
+		pb: statesdaily.pb as Number,
+		py: statesdaily.py as Number,
+		rj: statesdaily.rj as Number,
+		sk: statesdaily.sk as Number,
+		status: statesdaily.status,
+		tg: statesdaily.tg as Number,
+		tn: statesdaily.tn as Number,
+		tr: statesdaily.tr as Number,
+		tt: statesdaily.tt as Number,
+		up: statesdaily.up as Number,
+		ut: statesdaily.ut as Number,
+		wb: statesdaily.wb as Number
+	}
+	
+
+ var recovered = states_daily: payload.states_daily filter($.status == 'Recovered') map ( statesdaily , indexOfStatesdaily ) -> {
+		an: statesdaily.an as Number ,
+		ap: statesdaily.ap as Number,
+		ar: statesdaily.ar as Number,
+		"as": statesdaily."as" as Number,
+		br: statesdaily.br as Number,
+		ch: statesdaily.ch as Number,
+		ct: statesdaily.ct as Number,
+		date: statesdaily.date,
+		dd: statesdaily.dd as Number,
+		dl: statesdaily.dl as Number,
+		dn: statesdaily.dn as Number,
+		ga: statesdaily.ga as Number,
+		gj: statesdaily.gj as Number,
+		hp: statesdaily.hp as Number,
+		hr: statesdaily.hr as Number,
+		jh: statesdaily.jh as Number,
+		jk: statesdaily.jk as Number,
+		ka: statesdaily.ka as Number,
+		kl: statesdaily.kl as Number,
+		la: statesdaily.la as Number,
+		ld: statesdaily.ld as Number,
+		mh: statesdaily.mh as Number,
+		ml: statesdaily.ml as Number,
+		mn: statesdaily.mn as Number,
+		mp: (if (isEmpty(statesdaily.mp)) ("0") else (statesdaily.mp)) as Number,
+		mz: statesdaily.mz as Number,
+		nl: statesdaily.nl as Number,
+		"or": statesdaily."or" as Number,
+		pb: statesdaily.pb as Number,
+		py: statesdaily.py as Number,
+		rj: statesdaily.rj as Number,
+		sk: statesdaily.sk as Number,
+		status: statesdaily.status,
+		tg: statesdaily.tg as Number,
+		tn: statesdaily.tn as Number,
+		tr: statesdaily.tr as Number,
+		tt: statesdaily.tt as Number,
+		up: statesdaily.up as Number,
+		ut: statesdaily.ut as Number,
+		wb: statesdaily.wb as Number
+	}
+---
+{
+	piechart:[
+	totalsum:{
+		totalconfirmed:sum(confirmed.states_daily.tt),
+		totalactive:sum(confirmed.states_daily.tt) - (sum(deceased.states_daily.tt) + sum(recovered.states_daily.tt)),
+		totaldeceased:sum(deceased.states_daily.tt),
+		totalrecoverd:sum(recovered.states_daily.tt)
+	},
+	sumstatesconfirmed:{
+		"Andaman and Nicobar Islands":sum(confirmed.states_daily.an),
+		"Andhra Pradesh":sum(confirmed.states_daily.ap),
+		"Arunachal Pradesh":sum(confirmed.states_daily.ar),
+		"Assam":sum(confirmed.states_daily."as"),
+		Bihar:sum(confirmed.states_daily.br),
+		Chandigarh:sum(confirmed.states_daily.ch),
+		Chhattisgarh:sum(confirmed.states_daily.ct),
+		Delhi:sum(confirmed.states_daily.dl),
+		Goa:sum(confirmed.states_daily.ga),
+		Gujarat:sum(confirmed.states_daily.gj),
+		"Himachal Pradesh":sum(confirmed.states_daily.hp),
+		Haryana:sum(confirmed.states_daily.hr),
+		Jharkhand:sum(confirmed.states_daily.jh),
+		"Jammu and Kashmir":sum(confirmed.states_daily.jk),
+		Karnataka:sum(confirmed.states_daily.ka),
+		Kerela:sum(confirmed.states_daily.kl),
+		Ladakh:sum(confirmed.states_daily.la),
+		Maharashtra:sum(confirmed.states_daily.mh),
+		Meghalaya:sum(confirmed.states_daily.ml),
+		Manipur:sum(confirmed.states_daily.mn),
+		"Madhya Pradesh":sum(confirmed.states_daily.mp),
+		Mizoram:sum(confirmed.states_daily.mz),
+		Nagaland:sum(confirmed.states_daily.nl),
+		"Odisha":sum(confirmed.states_daily."or"),
+		Punjab:sum(confirmed.states_daily.pb),
+		Puducherry:sum(confirmed.states_daily.py),
+		Rajasthan:sum(confirmed.states_daily.rj),
+		Sikkim:sum(confirmed.states_daily.sk),
+		Telangana:sum(confirmed.states_daily.tg),
+		"Tamil Nadu":sum(confirmed.states_daily.tn),
+		Tripura:sum(confirmed.states_daily.tr),
+		"Uttar Pradesh":sum(confirmed.states_daily.up),
+		Uttarakhand:sum(confirmed.states_daily.ut),
+		"West Bengal":sum(confirmed.states_daily.wb)	
+		
+	
+	},
+	
+	sumstatesdeceased:{
+		"Andaman and Nicobar Islands":sum(deceased.states_daily.an),
+		"Andhra Pradesh":sum(deceased.states_daily.ap),
+		"Arunachal Pradesh":sum(deceased.states_daily.ar),
+		"Assam":sum(deceased.states_daily."as"),
+		Bihar:sum(deceased.states_daily.br),
+		Chandigarh:sum(deceased.states_daily.ch),
+		Chhattisgarh:sum(deceased.states_daily.ct),
+		Delhi:sum(deceased.states_daily.dl),
+		Goa:sum(deceased.states_daily.ga),
+		Gujarat:sum(deceased.states_daily.gj),
+		"Himachal Pradesh":sum(deceased.states_daily.hp),
+		Haryana:sum(deceased.states_daily.hr),
+		Jharkhand:sum(deceased.states_daily.jh),
+		"Jammu and Kashmir":sum(deceased.states_daily.jk),
+		Karnataka:sum(deceased.states_daily.ka),
+		Kerela:sum(deceased.states_daily.kl),
+		Ladakh:sum(deceased.states_daily.la),
+		Maharashtra:sum(deceased.states_daily.mh),
+		Meghalaya:sum(deceased.states_daily.ml),
+		Manipur:sum(deceased.states_daily.mn),
+		"Madhya Pradesh":sum(deceased.states_daily.mp),
+		Mizoram:sum(deceased.states_daily.mz),
+		Nagaland:sum(deceased.states_daily.nl),
+		"Odisha":sum(deceased.states_daily."or"),
+		Punjab:sum(deceased.states_daily.pb),
+		Puducherry:sum(deceased.states_daily.py),
+		Rajasthan:sum(deceased.states_daily.rj),
+		Sikkim:sum(deceased.states_daily.sk),
+		Telangana:sum(deceased.states_daily.tg),
+		"Tamil Nadu":sum(deceased.states_daily.tn),
+		Tripura:sum(deceased.states_daily.tr),
+		"Uttar Pradesh":sum(deceased.states_daily.up),
+		Uttarakhand:sum(deceased.states_daily.ut),
+		"West Bengal":sum(deceased.states_daily.wb)	
+		
+	
+	}
+	
+	,
+	
+	sumstatesrecovered:{
+		"Andaman and Nicobar Islands":sum(recovered.states_daily.an),
+		"Andhra Pradesh":sum(recovered.states_daily.ap),
+		"Arunachal Pradesh":sum(recovered.states_daily.ar),
+		"Assam":sum(recovered.states_daily."as"),
+		Bihar:sum(recovered.states_daily.br),
+		Chandigarh:sum(recovered.states_daily.ch),
+		Chhattisgarh:sum(recovered.states_daily.ct),
+		Delhi:sum(recovered.states_daily.dl),
+		Goa:sum(recovered.states_daily.ga),
+		Gujarat:sum(recovered.states_daily.gj),
+		"Himachal Pradesh":sum(recovered.states_daily.hp),
+		Haryana:sum(recovered.states_daily.hr),
+		Jharkhand:sum(recovered.states_daily.jh),
+		"Jammu and Kashmir":sum(recovered.states_daily.jk),
+		Karnataka:sum(recovered.states_daily.ka),
+		Kerela:sum(recovered.states_daily.kl),
+		Ladakh:sum(recovered.states_daily.la),
+		Maharashtra:sum(recovered.states_daily.mh),
+		Meghalaya:sum(recovered.states_daily.ml),
+		Manipur:sum(recovered.states_daily.mn),
+		"Madhya Pradesh":sum(recovered.states_daily.mp),
+		Mizoram:sum(recovered.states_daily.mz),
+		Nagaland:sum(recovered.states_daily.nl),
+		"Odisha":sum(recovered.states_daily."or"),
+		Punjab:sum(recovered.states_daily.pb),
+		Puducherry:sum(recovered.states_daily.py),
+		Rajasthan:sum(recovered.states_daily.rj),
+		Sikkim:sum(recovered.states_daily.sk),
+		Telangana:sum(recovered.states_daily.tg),
+		"Tamil Nadu":sum(recovered.states_daily.tn),
+		Tripura:sum(recovered.states_daily.tr),
+		"Uttar Pradesh":sum(recovered.states_daily.up),
+		Uttarakhand:sum(recovered.states_daily.ut),
+		"West Bengal":sum(recovered.states_daily.wb)	
+		
+	
+	}
+	
+	]
+}
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	</mule>
