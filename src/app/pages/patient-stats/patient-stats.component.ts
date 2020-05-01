@@ -18,6 +18,9 @@ export class PatientStatsComponent implements OnInit {
     this.patientStats.getPatientsStats().subscribe({
       next: (patientStats) => {
         console.log(patientStats.piechart);
+        let totalconfirmed = patientStats.piechart[0].totalsum.totalconfirmed;
+        let totalrecoverd = patientStats.piechart[0].totalsum.totalrecoverd;
+        let totaldeceased = patientStats.piechart[0].totalsum.totaldeceased;
         for (let key in patientStats.piechart[1].sumstatesconfirmed) {
           this.dataPointsConfirmedCases.push({
             y: patientStats.piechart[1].sumstatesconfirmed[key],
@@ -38,17 +41,20 @@ export class PatientStatsComponent implements OnInit {
         }
         console.log(this.dataPointsRecoveredCases);
         let chartConfirmedCases = new CanvasJS.Chart('chartConfirmedCases', {
+          backgroundColor: "#3e3672",
           theme: 'light2',
           animationEnabled: true,
           exportEnabled: true,
           title: {
-            text: 'Confirmed Cases',
+            text: 'Confirmed Cases : ' + totalconfirmed,
+            fontColor: "white",
           },
           data: [
             {
               type: 'pie',
               toolTipContent: '<b>{name}</b>:{y}',
               indexLabel: '{name} - #percent%',
+              indexLabelFontColor: "white",
               dataPoints: this.dataPointsConfirmedCases,
             },
           ],
@@ -56,32 +62,38 @@ export class PatientStatsComponent implements OnInit {
 
         let chartRecoveredCases = new CanvasJS.Chart('chartRecoveredCases', {
           theme: 'light2',
+          backgroundColor: "#3e3672",
           animationEnabled: true,
           exportEnabled: true,
           title: {
-            text: 'Recovered Cases',
+            text: 'Recovered Cases : ' + totalrecoverd,
+            fontColor: "green",
           },
           data: [
             {
               type: 'pie',
               toolTipContent: '<b>{name}</b>:{y}',
               indexLabel: '{name} - #percent%',
+              indexLabelFontColor: "white",
               dataPoints: this.dataPointsRecoveredCases,
             },
           ],
         });
         let chartDeceasedCases = new CanvasJS.Chart('chartDeceasedCases', {
           theme: 'light2',
+          backgroundColor: "#3e3672",
           animationEnabled: true,
           exportEnabled: true,
           title: {
-            text: 'Deceased Cases',
+            text: 'Deceased Cases : ' + totaldeceased,
+            fontColor: "red",
           },
           data: [
             {
               type: 'pie',
               toolTipContent: '<b>{name}</b>:{y}',
               indexLabel: '{name} - #percent%',
+              indexLabelFontColor: "white",
               dataPoints: this.dataPointsDeceasedCases,
             },
           ],

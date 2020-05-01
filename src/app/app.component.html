@@ -1,12 +1,13 @@
 <nav class="navbar navbar-expand navbar-light bg-light">
   <a class="navbar-brancd">{{ pageTitle }}</a>
   <ul class="nav nav-pills">
-    <li><a class="nav-link">Home</a></li>
+    <li><a class="nav-link"[routerLink]="['/home']">Home</a></li>
     <li><a class="nav-link" [routerLink]="['/patients']">PatientList</a></li>
-    <li><a class="nav-link" [routerLink]="['/stats']">Statewise Stats</a></li>
-    <li></li>
   </ul>
 </nav>
 <div class="container">
   <router-outlet></router-outlet>
 </div>
+
+
+

@@ -10,7 +10,7 @@ import { tap, catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class PatientStatsService {
-  private patientsUrl = 'http://covid19-india.us-e2.cloudhub.io/piechart';
+  private patientsUrl = 'https://covid19-india.us-e2.cloudhub.io/piechart';
   constructor(private http: HttpClient) {}
   getPatientsStats(): Observable<any> {
     return this.http.get(this.patientsUrl).pipe(

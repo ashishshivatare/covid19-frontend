@@ -6,6 +6,7 @@ import { PatientComponent } from './pages/patient/patient.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PatientStatsComponent } from './pages/patient-stats/patient-stats.component';
+import { HomeComponent } from './pages/home/home.component';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
@@ -16,11 +17,9 @@ import { RouterModule } from '@angular/router';
     HttpClientModule,
     MatProgressSpinnerModule,
     RouterModule.forRoot([
+      { path: '', component: HomeComponent},
+      { path: 'home', component: HomeComponent},
       { path: 'patients', component: PatientComponent },
-      {
-        path: 'stats',
-        component: PatientStatsComponent,
-      },
     ]),
   ],
   providers: [],
