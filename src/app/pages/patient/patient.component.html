@@ -15,7 +15,7 @@
       </div>
     </div>
   </div>
-  <div class="table-responsive">
+  <div class="table-responsive" style="max-height: 50rem;">
     <mat-spinner *ngIf="!patientList || !patientList.length"></mat-spinner>
     <table class="table" *ngIf="patientList && patientList.length">
       <thead>
